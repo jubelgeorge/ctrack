@@ -46,8 +46,7 @@ class SocialLogin extends Component {
         return (      
             // <h1>hi</h1>      
             <GoogleLogin
-                clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}
-                //clientId="797052385196-gsiv46dl36ihv86j0ar6rc18hovkf1ok.apps.googleusercontent.com"
+                clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}                
                 buttonText="Login with Google"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}

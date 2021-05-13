@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import { socialLogin, authenticate } from "../auth/index";
+
+const dotenv = require('dotenv');
+dotenv.config();
  
 class SocialLogin extends Component {
     constructor() {
@@ -43,7 +46,8 @@ class SocialLogin extends Component {
         return (      
             // <h1>hi</h1>      
             <GoogleLogin
-                clientId="797052385196-gsiv46dl36ihv86j0ar6rc18hovkf1ok.apps.googleusercontent.com"
+                clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}
+                //clientId="797052385196-gsiv46dl36ihv86j0ar6rc18hovkf1ok.apps.googleusercontent.com"
                 buttonText="Login with Google"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}

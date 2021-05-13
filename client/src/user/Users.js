@@ -12,6 +12,7 @@ class Users extends Component {
 
     componentDidMount() {
         list().then(data => {
+            console.log(data);
             if (data.error) {
                 console.log(data.error);
             } else {

@@ -29,7 +29,7 @@ exports.getBussRegs = (req, res) => {
         // .select("_id title body created likes")
         // .sort({ created: -1 })
         .then(bussRegs => {
-            res.json({bussRegs: bussRegs});
+            res.json(bussRegs);
         })
         .catch(err => console.log(err));
 };
@@ -42,35 +42,52 @@ exports.createBussReg = async (req,res,next) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
-    /****************SALESFORCE***************/
-    //jsForce connection
-    const conn = new jsforce.Connection({
-        oauth2 : {
-        // you can change loginUrl to connect to sandbox or prerelease env.
-        loginUrl : 'https://ibm-af-dev-ed.my.salesforce.com',
-        clientId : '3MVG9VeAQy5y3BQWEZTsxqeLYmR7ujDLXZf6bRG3NOI3sGyIH95yGf7G5IbGtMU7y7rLQv93AOsnQhYJKifwl',
-        clientSecret : 'A4EBB3132DEF60028C9F1F850CE569AC06A3BF2D05EA9AD7C739E36DC3643932',
-        redirectUri : 'http://localhost:3000/token'
-        }
-    });
-    conn.login('jacob@ctpoc.com', 'ctrack@2020uwLc9nyrwun6ISAXuqdAZoXng', function(error, result) {
-        if (error) { return console.error(error); }
-            
-        // Now you can get the access token and instance URL information.
-        // Save them to establish connection next time.
-        console.log(conn.accessToken);
-        console.log(conn.instanceUrl);
-        
-        const body2 = { businessname: req.body.name, email : req.body.email};
-        conn.apex.post("/CTRACKBusinessWebService/", body2, function(error, result) {
-            if (error) { return console.error(error); }
-            console.log("response: ", result);
-        });
-    });
-    /****************************************/
-
+    
     try {
+        //const businessExists = await BussReg.findOne({ name: req.body.name, email: req.body.email });
+        const businessExists = await BussReg.findOne(
+            { 
+                $or: [
+                    {name: req.body.name},
+                    { email: req.body.email}
+                 ]
+            }
+        );
+        if (businessExists) {
+            return res.status(400).json({
+                errors: [{msg: 'User already exists!'}]
+            });
+        }
+        
+        /****************SALESFORCE***************/
+        //jsForce connection
+        const conn = new jsforce.Connection({
+            oauth2 : {
+            // you can change loginUrl to connect to sandbox or prerelease env.
+            loginUrl : 'https://ibm-af-dev-ed.my.salesforce.com',
+            clientId : '3MVG9VeAQy5y3BQWEZTsxqeLYmR7ujDLXZf6bRG3NOI3sGyIH95yGf7G5IbGtMU7y7rLQv93AOsnQhYJKifwl',
+            clientSecret : 'A4EBB3132DEF60028C9F1F850CE569AC06A3BF2D05EA9AD7C739E36DC3643932',
+            redirectUri : 'http://localhost:3000/token'
+            }
+        });
+        conn.login('jacob@ctpoc.com', 'ctrack@2020uwLc9nyrwun6ISAXuqdAZoXng', function(error, result) {
+            if (error) { return console.error(error); }
+                
+            // Now you can get the access token and instance URL information.
+            // Save them to establish connection next time.
+            console.log(conn.accessToken);
+            console.log(conn.instanceUrl);
+
+            console.log('SUCCESS');
+            
+            const body2 = { businessname: req.body.name, email : req.body.email};
+            conn.apex.post("/CTRACKBusinessWebService/", body2, function(error, result) {
+                if (error) { return console.error(error); }
+                console.log("response: ", result);
+            });
+        });
+        /****************************************/
+            
         const newBussReg = new BussReg(req.body);
         req.profile.hashed_password = undefined;
         req.profile.salt = undefined;

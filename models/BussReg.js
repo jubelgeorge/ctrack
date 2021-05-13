@@ -5,12 +5,12 @@ const {ObjectId} = mongoose.Schema;
 const BussRegSchema = new mongoose.Schema({  
   name: {
     type: String,
-    //required: true
+    required: true
   },
   email: {
     type: String,
-    //required: true,
-    //unique: true     //Set to true so that no two same email account cannot be registered
+    required: true,
+    unique: true     //Set to true so that no two same email account cannot be registered
   },
   doneBy: {
     type: ObjectId,

@@ -1,6 +1,5 @@
 const express = require('express');
 const morgan = require('morgan');
-const expressValidator = require('express-validator');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');

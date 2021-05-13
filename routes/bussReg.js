@@ -8,7 +8,7 @@ const {createBussRegValidator} = require('../validator/validator');       // Sam
 const router = express.Router();      // Now this entire routes file can be used as a middleware into our application
 
 
-router.get('/', getBussRegs);
+router.get('/bussregs', getBussRegs);
 
 // @route    POST /bussreg/new/:userId
 // @desc     Register new business
